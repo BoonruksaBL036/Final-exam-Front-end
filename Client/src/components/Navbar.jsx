@@ -1,6 +1,24 @@
 import React from "react";
 const NavBar = () => {
 
+  const menuItem = [
+      { id: 1, 
+        name: "Books", 
+        url: "/books" 
+      },
+      {
+        id: 2,
+        name: "Journals",
+        url: "/journals",
+      },
+      {
+        id: 3,
+        name: "Comics",
+        url: "/comics",
+      },
+
+    ];
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -25,14 +43,26 @@ const NavBar = () => {
           <ul
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-          ></ul>
+          >
+            {menuItem.map((item) => (
+              <li key={item.id}>
+                <a href={item.url}>{item.name}</a>
+              </li>
+            ))}
+          </ul>
         </div>
         <a className="btn btn-ghost text-xl" href="/">
           Book Store
         </a>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1"></ul>
+        <ul className="menu menu-horizontal px-1">
+          {menuItem.map((item) => (
+            <li key={item.id}>
+              <a href={item.url}>{item.name}</a>
+            </li>
+          ))}
+        </ul>
       </div>
       <div className="navbar-end space-x-2"></div>
     </div>

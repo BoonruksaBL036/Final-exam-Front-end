@@ -1,41 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import BookService from "../services/book.service";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import ComicService from "../services/comic.service";
 
-const AddBook = () => {
+const UpdateComic = () => {
   const navigate = useNavigate();
-  const [book, setBook] = useState({
-    title: "",
-    author: "",
-    category: "",
-    publishYear: 0,
-    isbn: "",
-    status: "AVAILABLE",
-    coverImage: "",
-    description: "",
-    location: "",
-    addedDate: Date().now,
-    itemType: "",
-    publisher: "",
-    edition: "",
-    pageCount: 0,
-    language: "",
-    genre: "",
-  });
+  const [comic, setComics] = useState([]);
+  const { id } = useParams();
+
+  useEffect(() => {
+    try {
+      const fetchItemById = async () => {
+        const response = await ComicService.getComicById(id);
+        setComics(response.data.data);
+        return response;
+      };
+      fetchItemById();
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  }, [id]);
+
   const handlechange = (e) => {
     const { name, value } = e.target;
-    setBook({ ...book, [name]: value });
+    setComics({ ...comic, [name]: value });
   };
   const handleSubmit = async () => {
     try {
-      const response = await BookService.createNewBook(book);
-      if (response.status === 201) {
+      const response = await ComicService.updateComicById(id,comic);
+      if (response.status === 200) {
         Swal.fire({
           icon: "success",
-          title: "Book added successfully!!",
+          title: "Comics added successfully!!",
         });
-        setBook({
+        setComics({
           title: "",
           author: "",
           category: "",
@@ -53,7 +51,7 @@ const AddBook = () => {
           language: "",
           genre: "",
         });
-        navigate("/books");
+        navigate("/comics");
       }
     } catch (error) {
       console.log("ERROR: ", error);
@@ -68,15 +66,15 @@ const AddBook = () => {
     <div className="container mx-auto">
       <div className="flex justify-center items-center">
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box  w-1/4 border p-4 shadow-xl h-auto gap-3">
-          <legend className="fieldset-legend text-2xl ">Add Book</legend>
+          <legend className="fieldset-legend text-2xl ">Update Comics</legend>
 
-          <label className="label">Book Title : </label>
+          <label className="label"> Title : </label>
           <input
             type="text"
             name="title"
-            value={book.title}
+            value={comic.title}
             className="input w-full"
-            placeholder="Book Title"
+            placeholder=""
             onChange={handlechange}
             required
           />
@@ -85,7 +83,7 @@ const AddBook = () => {
           <input
             type="text"
             name="author"
-            value={book.author}
+            value={comic.author}
             className="input w-full"
             placeholder=""
             onChange={handlechange}
@@ -95,7 +93,7 @@ const AddBook = () => {
           <label className="label">category</label>
           <input
             type="text"
-            value={book.category}
+            value={comic.category}
             name="category"
             className="input"
             placeholder=""
@@ -106,7 +104,7 @@ const AddBook = () => {
           <label className="label">PublishYear</label>
           <input
             type="number"
-            value={book.publishYear}
+            value={comic.publishYear}
             name="publishYear"
             className="input"
             placeholder=""
@@ -117,8 +115,62 @@ const AddBook = () => {
           <label className="label">isbn</label>
           <input
             type="text"
-            value={book.isbn}
+            value={comic.isbn}
             name="isbn"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+            <label className="label">series</label>
+          <input
+            type="text"
+            name="series"
+            value={comic.series}
+            className="input w-full"
+            placeholder=""
+            onChange={handlechange}
+          />
+
+          <label className="label">VolumeNumber</label>
+          <input
+            type="text"
+            value={comic.volume}
+            name="volume"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+          <label className="label">illustrator</label>
+          <input
+            type="text"
+            value={comic.illustrator}
+            name="illustrator"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+          <label className="label">ColorType</label>
+          <input
+            type="text"
+            value={comic.colorType}
+            name="colorType"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+          <label className="label">targetAge</label>
+          <input
+            type="text"
+            value={comic.targetAge}
+            name="targetAge"
             className="input"
             placeholder=""
             onChange={handlechange}
@@ -129,101 +181,24 @@ const AddBook = () => {
           <input
             type="text"
             name="type"
-            value={book.type}
+            value={comic.type}
             className="input w-full"
             placeholder="Book Type"
             onChange={handlechange}
           />
 
-          <label className="label">location</label>
-          <input
-            type="text"
-            value={book.location}
-            name="location"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">itemType</label>
-          <input
-            type="text"
-            value={book.itemType}
-            name="itemType"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">publisher</label>
-          <input
-            type="text"
-            value={book.publisher}
-            name="publisher"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">edition</label>
-          <input
-            type="text"
-            value={book.edition}
-            name="edition"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">pageCount</label>
-          <input
-            type="number"
-            value={book.pageCount}
-            name="pageCount"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">language</label>
-          <input
-            type="text"
-            value={book.language}
-            name="language"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">genre</label>
-          <input
-            type="text"
-            value={book.genre}
-            name="genre"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
           <label className="label"> Image : </label>
           <input
             type="text"
-            value={book.coverImage}
+            value={comic.coverImage}
             className="input w-full"
             onChange={handlechange}
-            placeholder="Book Img"
+            placeholder="Comics Img"
             name="coverImage"
           />
-          {book.coverImage && (
+          {comic.coverImage && (
             <div className="flex items-center gap-2">
-              <img className="h-32 " src={book.coverImage} />
+              <img className="h-32 " src={comic.coverImage} />
             </div>
           )}
 
@@ -239,4 +214,4 @@ const AddBook = () => {
   );
 };
 
-export default AddBook;
+export default UpdateComic;

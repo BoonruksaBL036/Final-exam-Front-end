@@ -16,11 +16,15 @@ const updateBookById = async (id, data) => {
 const deleteBookById = async (id) => {
   return await api.delete(API_URL + "/" + id);
 };
+const search = async (keyword) => {
+  return await api.get(API_URL + "/search?q=" + keyword)
+}
 const BookService = {
   createNewBook,
   getAllBook,
   getBookById,
   updateBookById,
   deleteBookById,
+  search
 };
 export default BookService;

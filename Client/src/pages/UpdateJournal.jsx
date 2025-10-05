@@ -1,57 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import BookService from "../services/book.service";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import JournalService from "../services/journal.service";
 
-const AddBook = () => {
+const UpdateJournal = () => {
   const navigate = useNavigate();
-  const [book, setBook] = useState({
-    title: "",
-    author: "",
-    category: "",
-    publishYear: 0,
-    isbn: "",
-    status: "AVAILABLE",
-    coverImage: "",
-    description: "",
-    location: "",
-    addedDate: Date().now,
-    itemType: "",
-    publisher: "",
-    edition: "",
-    pageCount: 0,
-    language: "",
-    genre: "",
-  });
+  const [journal, setJournal] = useState([]);
+  const { id } = useParams();
+
   const handlechange = (e) => {
     const { name, value } = e.target;
-    setBook({ ...book, [name]: value });
+    setJournal({ ...journal, [name]: value });
   };
+  useEffect(() => {
+    try {
+      const fetchItemById = async () => {
+        const response = await JournalService.getJournalById(id);
+        setJournal(response.data.data);
+        return response;
+      };
+      fetchItemById();
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  }, [id]);
   const handleSubmit = async () => {
     try {
-      const response = await BookService.createNewBook(book);
-      if (response.status === 201) {
+      const response = await JournalService.updateJournalById(id, journal);
+      if (response.status === 200) {
         Swal.fire({
           icon: "success",
-          title: "Book added successfully!!",
+          title: "Journal added successfully!!",
         });
-        setBook({
+        setJournal({
           title: "",
           author: "",
           category: "",
           publishYear: 0,
-          isbn: "",
-          status: "AVAILABLE",
-          coverImage: "",
-          description: "",
-          location: "",
-          addedDate: Date().now,
-          itemType: "",
+          issn: "",
+          volume: "",
+          issue: "",
+          publicationFrequency: "",
           publisher: "",
-          edition: "",
-          pageCount: 0,
-          language: "",
-          genre: "",
+          description: "",
         });
         navigate("/books");
       }
@@ -68,15 +59,15 @@ const AddBook = () => {
     <div className="container mx-auto">
       <div className="flex justify-center items-center">
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box  w-1/4 border p-4 shadow-xl h-auto gap-3">
-          <legend className="fieldset-legend text-2xl ">Add Book</legend>
+          <legend className="fieldset-legend text-2xl ">Update Journal</legend>
 
-          <label className="label">Book Title : </label>
+          <label className="label">Journal Title : </label>
           <input
             type="text"
             name="title"
-            value={book.title}
+            value={journal.title}
             className="input w-full"
-            placeholder="Book Title"
+            placeholder=""
             onChange={handlechange}
             required
           />
@@ -85,7 +76,7 @@ const AddBook = () => {
           <input
             type="text"
             name="author"
-            value={book.author}
+            value={journal.author}
             className="input w-full"
             placeholder=""
             onChange={handlechange}
@@ -95,7 +86,7 @@ const AddBook = () => {
           <label className="label">category</label>
           <input
             type="text"
-            value={book.category}
+            value={journal.category}
             name="category"
             className="input"
             placeholder=""
@@ -106,7 +97,7 @@ const AddBook = () => {
           <label className="label">PublishYear</label>
           <input
             type="number"
-            value={book.publishYear}
+            value={journal.publishYear}
             name="publishYear"
             className="input"
             placeholder=""
@@ -114,11 +105,54 @@ const AddBook = () => {
             required
           />
 
-          <label className="label">isbn</label>
+          <label className="label">issn</label>
           <input
             type="text"
-            value={book.isbn}
-            name="isbn"
+            value={journal.issn}
+            name="issn"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+          <label className="label">volume </label>
+          <input
+            type="text"
+            name="volume"
+            value={journal.volume}
+            className="input w-full"
+            placeholder=" Type"
+            onChange={handlechange}
+          />
+
+          <label className="label">issue</label>
+          <input
+            type="text"
+            value={journal.issue}
+            name="issue"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+          <label className="label">publicationFrequency</label>
+          <input
+            type="text"
+            value={journal.publicationFrequency}
+            name="publicationFrequency"
+            className="input"
+            placeholder=""
+            onChange={handlechange}
+            required
+          />
+
+          <label className="label">publisher</label>
+          <input
+            type="text"
+            value={journal.publisher}
+            name="publisher"
             className="input"
             placeholder=""
             onChange={handlechange}
@@ -129,101 +163,24 @@ const AddBook = () => {
           <input
             type="text"
             name="type"
-            value={book.type}
+            value={journal.type}
             className="input w-full"
-            placeholder="Book Type"
+            placeholder="Journal Type"
             onChange={handlechange}
-          />
-
-          <label className="label">location</label>
-          <input
-            type="text"
-            value={book.location}
-            name="location"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">itemType</label>
-          <input
-            type="text"
-            value={book.itemType}
-            name="itemType"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">publisher</label>
-          <input
-            type="text"
-            value={book.publisher}
-            name="publisher"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">edition</label>
-          <input
-            type="text"
-            value={book.edition}
-            name="edition"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">pageCount</label>
-          <input
-            type="number"
-            value={book.pageCount}
-            name="pageCount"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">language</label>
-          <input
-            type="text"
-            value={book.language}
-            name="language"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
-          />
-
-          <label className="label">genre</label>
-          <input
-            type="text"
-            value={book.genre}
-            name="genre"
-            className="input"
-            placeholder=""
-            onChange={handlechange}
-            required
           />
 
           <label className="label"> Image : </label>
           <input
             type="text"
-            value={book.coverImage}
+            value={journal.coverImage}
             className="input w-full"
             onChange={handlechange}
             placeholder="Book Img"
             name="coverImage"
           />
-          {book.coverImage && (
+          {journal.coverImage && (
             <div className="flex items-center gap-2">
-              <img className="h-32 " src={book.coverImage} />
+              <img className="h-32 " src={journal.coverImage} />
             </div>
           )}
 
@@ -239,4 +196,4 @@ const AddBook = () => {
   );
 };
 
-export default AddBook;
+export default UpdateJournal;

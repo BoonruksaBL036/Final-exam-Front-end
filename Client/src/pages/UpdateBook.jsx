@@ -1,36 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import BookService from "../services/book.service";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
-const AddBook = () => {
+const UpdateBook = () => {
   const navigate = useNavigate();
-  const [book, setBook] = useState({
-    title: "",
-    author: "",
-    category: "",
-    publishYear: 0,
-    isbn: "",
-    status: "AVAILABLE",
-    coverImage: "",
-    description: "",
-    location: "",
-    addedDate: Date().now,
-    itemType: "",
-    publisher: "",
-    edition: "",
-    pageCount: 0,
-    language: "",
-    genre: "",
-  });
+  const [book, setBook] = useState([]);
+  const { id } = useParams();
+  
   const handlechange = (e) => {
     const { name, value } = e.target;
     setBook({ ...book, [name]: value });
   };
+
+  useEffect(() => {
+    try {
+      const fetchItemById = async () => {
+        const response = await BookService.getBookById(id);
+        setBook(response.data.data);
+        return response;
+      };
+      fetchItemById();
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
+  }, [id]);
+
   const handleSubmit = async () => {
     try {
-      const response = await BookService.createNewBook(book);
-      if (response.status === 201) {
+      const response = await BookService.updateBookById(id, book);
+      if (response.status === 200) {
         Swal.fire({
           icon: "success",
           title: "Book added successfully!!",
@@ -68,7 +67,7 @@ const AddBook = () => {
     <div className="container mx-auto">
       <div className="flex justify-center items-center">
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box  w-1/4 border p-4 shadow-xl h-auto gap-3">
-          <legend className="fieldset-legend text-2xl ">Add Book</legend>
+          <legend className="fieldset-legend text-2xl ">Update Book</legend>
 
           <label className="label">Book Title : </label>
           <input
@@ -239,4 +238,4 @@ const AddBook = () => {
   );
 };
 
-export default AddBook;
+export default UpdateBook;

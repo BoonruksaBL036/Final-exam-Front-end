@@ -16,11 +16,15 @@ const updateComicById = async (id, data) => {
 const deleteComicById = async (id) => {
   return await api.delete(API_URL + "/" + id);
 };
+const search = async (keyword) => {
+  return await api.get(API_URL + "/search?q=" + keyword)
+}
 const ComicService = {
   createComics,
   getAllComics,
   getComicById,
   updateComicById,
   deleteComicById,
+  search,
 };
 export default ComicService;

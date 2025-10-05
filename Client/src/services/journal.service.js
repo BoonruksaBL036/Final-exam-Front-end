@@ -16,11 +16,15 @@ const updateJournalById = async (id, data) => {
 const deleteJournalById = async (id) => {
   return await api.delete(API_URL + "/" + id);
 };
+const search = async (keyword) => {
+  return await api.get(API_URL + "/search?q=" + keyword)
+}
 const JournalService = {
   createNewJournals,
   getAllJournals,
   getJournalById,
   updateJournalById,
   deleteJournalById,
+  search
 };
 export default JournalService;
